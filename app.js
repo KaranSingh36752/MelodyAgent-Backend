@@ -14,9 +14,9 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = process.env.SPOTIFY_CLIENT_ID; // your clientId
-var client_secret = process.env.SPOTIFY_SECRET_ID; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var client_id = process.env.SPOTIFY_CLIENT_ID;
+var client_secret = process.env.SPOTIFY_SECRET_ID;
+var redirect_uri = process.env.REDIRECT_URI; 
 
 
 const generateRandomString = (length) => {
@@ -31,8 +31,8 @@ var stateKey = 'spotify_auth_state';
 var app = express();
 
 const corsOptions = {
-  origin: 'http://localhost:8080', // Allow frontend origin
-  credentials: true, // Allow cookies & authentication headers
+  origin: process.env.FRONTEND_URI, 
+  credentials: true, 
 };
 
 app.use(express.static(__dirname + '/public'))
@@ -103,13 +103,13 @@ app.get('/callback', function(req, res) {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('http://localhost:8080/callback?' +
+        res.redirect(`${process.env.FRONTEND_URI}/callback?` +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
           }));
       } else {
-        res.redirect('http://localhost:8080/callback?' +
+        res.redirect(`${process.env.FRONTEND_URI}/callback?` +
           querystring.stringify({
             error: 'invalid_token'
           }));
